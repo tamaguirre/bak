@@ -1,1 +1,5 @@
-<img src="/logo.png" alt="Logo" height="200">
+@extends('layout')
+
+@section('content')
+
+@endsection
