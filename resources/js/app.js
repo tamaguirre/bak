@@ -2,14 +2,9 @@ import 'bootstrap';
 
 import { createApp } from 'vue'
 
+import users from './pages/users.vue'
 
-const mount = (selector, comp, props = {}) => {
-    const el = document.querySelector(selector)
-    if (!el) return
-    const app = createApp(comp, props)
+const app = createApp({})
+app.component('users', users)
 
-    app.mount(el)
-    return app
-}
-
-mount('#app', Hello)
+app.mount('#app')

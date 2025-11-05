@@ -30,7 +30,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="productsDropdown">
                             <li>
-                                <a class="dropdown-item" href="/">Usuarios</a>
+                                <a class="dropdown-item" href="/users">Usuarios</a>
                             </li>
                         </ul>
                     </li>
@@ -62,7 +62,7 @@
     </nav>
 
     <main class="py-4">
-        <div class="container">
+        <div class="container" id="app">
             @yield('content')
         </div>
     </main>
