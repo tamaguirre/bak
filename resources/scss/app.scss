@@ -1,7 +1,7 @@
 $primary: #009bff;
 
-$theme-colors: (
-    "primary": $primary,
-);
-
 @import "bootstrap/scss/bootstrap";
+
+.th-end {
+    width: 20%;
+}
