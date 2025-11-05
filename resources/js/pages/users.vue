@@ -57,54 +57,45 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-primary">
-                <div class="card-header bg-primary text-white">
-                    <div class="card-title">
-                        Usuarios
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Usuarios</h6>
+        <button
+            data-bs-toggle="modal"
+            data-bs-target="#dlgCreate"
+            class="btn btn-outline-primary float-end">
+            Nuevo
+        </button>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-sm-6 col-lg-4" v-for="user in users" :key="user.id">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="avatar-initials">{{ user.name.charAt(0).toUpperCase() }}</div>
+                        <div class="min-w-0">
+                            <div class="fw-semibold text-truncate">{{ user.name }}</div>
+                            <div class="text-muted small text-truncate">{{ user.email }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto d-flex gap-2">
                         <button
+                            @click="edit = { ...user }"
                             data-bs-toggle="modal"
-                            data-bs-target="#dlgCreate"
-                            class="btn btn-sm text-white border-white float-end">
-                            Nuevo
+                            data-bs-target="#dlgEdit"
+                            class="btn btn-sm bg-primary text-white flex-fill">
+                            Editar
+                        </button>
+
+                        <button
+                            @click="edit = { ...user }"
+                            data-bs-toggle="modal"
+                            data-bs-target="#dlgDelete"
+                            class="btn btn-sm btn-outline-danger flex-fill">
+                            Eliminar
                         </button>
                     </div>
-                </div>
-                <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>E-mail</th>
-                                <th class="th-end"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="user in users" :key="user.id">
-                                <td>{{ user.name }}</td>
-                                <td>{{ user.email }}</td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button
-                                            @click="edit = { ...user }"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#dlgEdit"
-                                            class="btn btn-sm bg-primary text-white">
-                                            Editar
-                                        </button>
-                                        <button
-                                            @click="edit = { ...user }"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#dlgDelete"
-                                            class="btn btn-sm bg-danger text-white">
-                                            Eliminar
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
