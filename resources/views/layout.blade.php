@@ -32,6 +32,9 @@
                             <li>
                                 <a class="dropdown-item" href="/users">Usuarios</a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="/rooms">Pabellones</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>

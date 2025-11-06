@@ -6,6 +6,7 @@ use Laravel\Fortify\Features;
 
 Route::view('/', 'home')->name('home');
 Route::view('users', 'users')->name('users');
+Route::view('rooms', 'rooms')->name('rooms');
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');

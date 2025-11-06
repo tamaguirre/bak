@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index(): JsonResource
     {
-        $users = User::query()->get();
+        $users = User::query()->orderBy('name')->get();
 
         return UserResource::collection($users);
     }
