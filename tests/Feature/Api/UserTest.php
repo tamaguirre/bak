@@ -20,6 +20,7 @@ class UserTest extends TestCase
                 'data'  => [
                     0 => [
                         'id'    => $user->id,
+                        'role'  => []
                     ]
                 ]
             ]);
@@ -33,6 +34,7 @@ class UserTest extends TestCase
         $params = [
             'name'      => $data->name,
             'email'     => $data->email,
+            'role_id'   => $data->role_id,
             'password'  => 'password',
         ];
 
@@ -45,8 +47,9 @@ class UserTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('users', [
-            'name'  => $data->name,
-            'email' => $data->email,
+            'name'      => $data->name,
+            'email'     => $data->email,
+            'role_id'   => $data->role_id,
         ]);
     }
 
@@ -59,6 +62,7 @@ class UserTest extends TestCase
                     'name'      => ['El campo nombre es obligatorio.'],
                     'email'     => ['El campo e-mail es obligatorio.'],
                     'password'  => ['El campo contraseña es obligatorio.'],
+                    'role_id'   => ['El campo rol es obligatorio.']
                 ]
             ]);
     }
@@ -71,6 +75,7 @@ class UserTest extends TestCase
         $params = [
             'name'      => $data->name,
             'email'     => $data->email,
+            'role_id'   => $data->role_id,
             'password'  => 'password',
         ];
 
@@ -86,6 +91,7 @@ class UserTest extends TestCase
             'id'    => $user->id,
             'name'  => $data->name,
             'email' => $data->email,
+            'role_id' => $data->role_id,
         ]);
     }
 
@@ -99,7 +105,7 @@ class UserTest extends TestCase
                 'errors'  => [
                     'name'      => ['El campo nombre es obligatorio.'],
                     'email'     => ['El campo e-mail es obligatorio.'],
-                    'password'  => ['El campo contraseña es obligatorio.'],
+                    'role_id'   => ['El campo rol es obligatorio.']
                 ]
             ]);
     }

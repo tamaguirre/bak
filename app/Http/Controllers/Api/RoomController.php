@@ -15,14 +15,14 @@ class RoomController extends Controller
 {
     public function index(): JsonResource
     {
-        $rooms = Room::query()->orderBy('name')->get();
+        $rooms = Room::query()->with('type')->orderBy('name')->get();
 
         return RoomResource::collection($rooms);
     }
 
     public function store(RoomStore $request): RoomResource
     {
-        $room = Room::query()->create($request->only(['name']));
+        $room = Room::query()->create($request->only(['name', 'type_id']));
 
         return new RoomResource($room);
     }
@@ -31,7 +31,7 @@ class RoomController extends Controller
     {
         $room = Room::query()->find($roomId);
 
-        $room->update($request->only(['name']));
+        $room->update($request->only(['name', 'type_id']));
 
         return new RoomResource($room);
     }

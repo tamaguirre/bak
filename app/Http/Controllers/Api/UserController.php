@@ -15,14 +15,14 @@ class UserController extends Controller
 {
     public function index(): JsonResource
     {
-        $users = User::query()->orderBy('name')->get();
+        $users = User::query()->with('role')->orderBy('name')->get();
 
         return UserResource::collection($users);
     }
 
     public function store(UserStore $request): UserResource
     {
-        $user = User::query()->create($request->only(['name', 'email', 'password']));
+        $user = User::query()->create($request->only(['name', 'email', 'role_id', 'password']));
 
         return new UserResource($user);
     }
@@ -31,7 +31,7 @@ class UserController extends Controller
     {
         $user = User::query()->find($userId);
 
-        $user->update($request->only(['name', 'email', 'password']));
+        $user->update($request->only(['name', 'email', 'role_id', 'password']));
 
         return new UserResource($user);
     }

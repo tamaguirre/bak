@@ -14,7 +14,8 @@ class RoomStore extends FormRequest
     public function rules(): array
     {
         return [
-            'name'  => ['required', 'unique:rooms,name']
+            'name'      => ['required', 'unique:rooms,name'],
+            'type_id'   => 'required'
         ];
     }
 }

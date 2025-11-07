@@ -3,13 +3,27 @@ import { onMounted, ref } from 'vue';
 import api from '@/axios.js'
 
 const rooms = ref([]);
-const create = ref({})
-const edit = ref({})
+const types = ref([])
+const create = ref({
+    type_id: ''
+})
+const edit = ref({
+    type_id: ''
+})
 const errors = ref({})
 
+const loadRoomTypes = async () => {
+    const { data } = await api.get('/room-types')
+    types.value = data.data
+}
 const loadRooms = async () => {
     const { data } = await api.get('/rooms')
     rooms.value = data.data
+}
+
+const show = (room) => {
+    edit.value = room
+    edit.value.type_id = room.type ? room.type.id : ''
 }
 
 const store = async ({ close }) => {
@@ -51,6 +65,7 @@ const destroy = async ({ close }) => {
 }
 
 onMounted(() => {
+    loadRoomTypes()
     loadRooms()
 })
 </script>
@@ -72,13 +87,18 @@ onMounted(() => {
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex align-items-center gap-3 mb-2">
                         <div class="min-w-0">
-                            <div class="fw-semibold text-truncate">{{ room.name }}</div>
+                            <div class="fw-semibold text-truncate">
+                                {{ room.name }}
+                                <label class="badge bg-primary">
+                                    {{ room.type?.name }}
+                                </label>
+                            </div>
                         </div>
                     </div>
 
                     <div class="mt-auto d-flex gap-2">
                         <button
-                            @click="edit = { ...room }"
+                            @click="show(room)"
                             data-bs-toggle="modal"
                             data-bs-target="#dlgEdit"
                             class="btn btn-sm bg-primary text-white flex-fill">
@@ -86,7 +106,7 @@ onMounted(() => {
                         </button>
 
                         <button
-                            @click="edit = { ...room }"
+                            @click="show(room)"
                             data-bs-toggle="modal"
                             data-bs-target="#dlgDelete"
                             class="btn btn-sm btn-outline-danger flex-fill">
@@ -105,6 +125,20 @@ onMounted(() => {
                 <input type="text" class="form-control" v-model="create.name">
                 <p class="text-danger" v-if="errors?.name">{{ errors.name[0] }}</p>
             </div>
+
+            <div class="col-12 mb-3">
+                <label class="form-label">Tipo de Sala</label>
+                <select class="form-control" v-model="create.type_id">
+                    <option value="">--Seleccione--</option>
+                    <option
+                        v-for="type in types"
+                        :key="type.id"
+                        :value="type.id">
+                        {{ type.name }}
+                    </option>
+                </select>
+                <p class="text-danger" v-if="errors?.type_id">{{ errors.type_id[0] }}</p>
+            </div>
         </div>
     </modal>
 
@@ -114,6 +148,20 @@ onMounted(() => {
                 <label class="form-label">Nombre</label>
                 <input type="text" class="form-control" v-model="edit.name">
                 <p class="text-danger" v-if="errors?.name">{{ errors.name[0] }}</p>
+            </div>
+
+            <div class="col-12 mb-3">
+                <label class="form-label">Tipo de Sala</label>
+                <select class="form-control" v-model="edit.type_id">
+                    <option value="">--Seleccione--</option>
+                    <option
+                        v-for="type in types"
+                        :key="type.id"
+                        :value="type.id">
+                        {{ type.name }}
+                    </option>
+                </select>
+                <p class="text-danger" v-if="errors?.type_id">{{ errors.type_id[0] }}</p>
             </div>
         </div>
     </modal>

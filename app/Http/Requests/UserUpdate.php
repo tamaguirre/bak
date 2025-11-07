@@ -14,9 +14,10 @@ class UserUpdate extends FormRequest
     public function rules(): array
     {
         return [
-            'name'     => 'string|max:255',
-            'email'    => 'string|email|max:255|unique:users,email,' . $this->route('user'),
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users,email,' . $this->route('user'),
             'password' => 'string|min:8|max:15',
+            'role_id'  => 'required',
         ];
     }
 }

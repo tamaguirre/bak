@@ -12,7 +12,7 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="/logo.png" alt="BAK" height="40" class="logo-bak">
+                <img src="/logo.png" alt="BAK" height="35" class="logo-bak">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>

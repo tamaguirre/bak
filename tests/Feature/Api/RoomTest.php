@@ -19,7 +19,8 @@ class RoomTest extends TestCase
             ->assertJson([
                 'data'  => [
                     0   => [
-                        'id'    => $room->id
+                        'id'    => $room->id,
+                        'type'  => []
                     ]
                 ]
             ]);
@@ -30,7 +31,8 @@ class RoomTest extends TestCase
         $data = Room::factory()->make();
 
         $params = [
-            'name'  => $data->name
+            'name'      => $data->name,
+            'type_id'   => $data->type_id
         ];
 
         $this->post('api/v1/rooms', $params)
@@ -42,7 +44,8 @@ class RoomTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('rooms', [
-            'name'  => $data->name
+            'name'      => $data->name,
+            'type_id'   => $data->type_id
         ]);
     }
 
@@ -52,7 +55,8 @@ class RoomTest extends TestCase
             ->assertStatus(422)
             ->assertJson([
                 'errors'  => [
-                    'name'  => ['El campo nombre es obligatorio.']
+                    'name'      => ['El campo nombre es obligatorio.'],
+                    'type_id'   => ['El campo tipo es obligatorio.'],
                 ]
             ]);
     }
@@ -63,7 +67,8 @@ class RoomTest extends TestCase
         $data = Room::factory()->make();
 
         $params = [
-            'name'  => $data->name
+            'name'      => $data->name,
+            'type_id'   => $data->type_id
         ];
 
         $this->put('api/v1/rooms/'.$room->id, $params)
@@ -75,8 +80,9 @@ class RoomTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('rooms', [
-            'id'    => $room->id,
-            'name'  => $data->name
+            'id'        => $room->id,
+            'name'      => $data->name,
+            'type_id'   => $data->type_id
         ]);
     }
 
@@ -84,11 +90,12 @@ class RoomTest extends TestCase
     {
         $room = Room::factory()->create();
 
-        $this->put('api/v1/rooms/'.$room->id)
+        $this->putJson('api/v1/rooms/'.$room->id)
             ->assertStatus(422)
             ->assertJson([
                 'errors'  => [
-                    'name'  => ['El campo nombre es obligatori.']
+                    'name'      => ['El campo nombre es obligatorio.'],
+                    'type_id'   => ['El campo tipo es obligatorio.'],
                 ]
             ]);
     }

@@ -4,13 +4,28 @@ import api from '@/axios.js'
 
 
 const users = ref([]);
-const create = ref({})
-const edit = ref({})
+const roles = ref([]);
+const create = ref({
+    role_id: ''
+})
+const edit = ref({
+    role_id: ''
+})
 const errors = ref({})
+
+const loadRoles = async () => {
+    const { data } = await api.get('/roles')
+    roles.value = data.data
+}
 
 const loadUsers = async () => {
     const { data } = await api.get('/users')
     users.value = data.data
+}
+
+const show = (user) => {
+    edit.value = user
+    edit.value.role_id = user.role ? user.role.id : ''
 }
 
 const store = async ({ close }) => {
@@ -53,6 +68,7 @@ const destroy = async ({ close }) => {
 
 onMounted(() => {
     loadUsers()
+    loadRoles()
 })
 </script>
 
@@ -74,14 +90,17 @@ onMounted(() => {
                     <div class="d-flex align-items-center gap-3 mb-2">
                         <div class="avatar-initials">{{ user.name.charAt(0).toUpperCase() }}</div>
                         <div class="min-w-0">
-                            <div class="fw-semibold text-truncate">{{ user.name }}</div>
+                            <div class="fw-semibold text-truncate">
+                                {{ user.name }}
+                                <span class="badge bg-primary">{{ user.role?.name }}</span>
+                            </div>
                             <div class="text-muted small text-truncate">{{ user.email }}</div>
                         </div>
                     </div>
 
                     <div class="mt-auto d-flex gap-2">
                         <button
-                            @click="edit = { ...user }"
+                            @click="show(user)"
                             data-bs-toggle="modal"
                             data-bs-target="#dlgEdit"
                             class="btn btn-sm bg-primary text-white flex-fill">
@@ -89,7 +108,7 @@ onMounted(() => {
                         </button>
 
                         <button
-                            @click="edit = { ...user }"
+                            @click="show(user)"
                             data-bs-toggle="modal"
                             data-bs-target="#dlgDelete"
                             class="btn btn-sm btn-outline-danger flex-fill">
@@ -115,10 +134,24 @@ onMounted(() => {
                 <p class="text-danger" v-if="errors.email">{{ errors.email[0] }}</p>
             </div>
 
-            <div class="col-12">
+            <div class="col-12 mb-3">
                 <label class="form-label">Contraseña</label>
                 <input type="password" class="form-control" v-model="create.password">
                 <p class="text-danger" v-if="errors.password">{{ errors.password[0] }}</p>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Rol</label>
+                <select class="form-control" v-model="create.role_id">
+                    <option value="">--Seleccione--</option>
+                    <option
+                        v-for="role in roles"
+                        :key="role.id"
+                        :value="role.id">
+                        {{ role.name }}
+                    </option>
+                </select>
+                <p class="text-danger" v-if="errors.role_id">{{ errors.role_id[0] }}</p>
             </div>
         </div>
     </modal>
@@ -137,10 +170,24 @@ onMounted(() => {
                 <p class="text-danger" v-if="errors.email">{{ errors.email[0] }}</p>
             </div>
 
-            <div class="col-12">
+            <div class="col-12 mb-3">
                 <label class="form-label">Contraseña</label>
                 <input type="password" class="form-control" v-model="edit.password">
                 <p class="text-danger" v-if="errors.password">{{ errors.password[0] }}</p>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Rol</label>
+                <select class="form-control" v-model="edit.role_id">
+                    <option value="">--Seleccione--</option>
+                    <option
+                        v-for="role in roles"
+                        :key="role.id"
+                        :value="role.id">
+                        {{ role.name }}
+                    </option>
+                </select>
+                <p class="text-danger" v-if="errors.role_id">{{ errors.role_id[0] }}</p>
             </div>
         </div>
     </modal>
