@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\RoomTypeController;
@@ -11,5 +12,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('rooms', RoomController::class);
     Route::get('room-types', [RoomTypeController::class, 'index']);
     Route::get('roles', [RoleController::class, 'index']);
+    Route::post('reservations', [ReservationController::class, 'store']);
 });
 

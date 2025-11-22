@@ -153,10 +153,14 @@ return [
     ],
 
     'attributes' => [
-        'password'  => 'contraseña',
-        'name'      => 'nombre',
-        'email'     => 'e-mail',
-        'type_id'   => 'tipo',
-        'role_id'   => 'rol',
+        'password'      => 'contraseña',
+        'name'          => 'nombre',
+        'email'         => 'e-mail',
+        'type_id'       => 'tipo',
+        'role_id'       => 'rol',
+        'room_id'       => 'sala',
+        'start_date'    => 'fecha de inicio',
+        'end_date'      => 'fecha de término',
+        'doctor_id'     => 'doctor',
     ],
 ];
