@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -21,6 +22,23 @@ class UserTest extends TestCase
                     0 => [
                         'id'    => $user->id,
                         'role'  => []
+                    ]
+                ]
+            ]);
+
+    }
+
+    function test_list_users_by_role()
+    {
+        $role = Role::factory()->create();
+        $user = User::factory()->create(['role_id' => $role->id]);
+
+        $this->get('/api/v1/users/?role_id='.$role->id)
+            ->assertStatus(200)
+            ->assertJson([
+                'data'  => [
+                    0 => [
+                        'id'    => $user->id,
                     ]
                 ]
             ]);

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api;
 
 use App\Models\Reservation;
+use App\Models\Room;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -10,6 +11,43 @@ use Tests\TestCase;
 class ReservationTest extends TestCase
 {
     use RefreshDatabase;
+
+    function test_list_reservations()
+    {
+        $reservation = Reservation::factory()->create();
+
+        $this->get('api/v1/reservations')
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    [
+                        'id'        => $reservation->id,
+                        'room'      => [],
+                        'doctor'    => []
+                    ]
+                ]
+            ]);
+    }
+
+    function test_list_reservations_by_room_id()
+    {
+        $room = Room::factory()->create();
+        $reservation = Reservation::factory()->create([
+            'room_id' => $room->id,
+        ]);
+
+        $this->get('api/v1/reservations')
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    [
+                        'id'        => $reservation->id,
+                        'room'      => [],
+                        'doctor'    => []
+                    ]
+                ]
+            ]);
+    }
 
     function test_store_a_reservation()
     {

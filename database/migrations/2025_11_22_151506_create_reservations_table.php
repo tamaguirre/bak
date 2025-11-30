@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('room_id')->index();
+            $table->unsignedBigInteger('room_id')->nullable()->index();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->boolean('emergency')->default(false);
-            $table->unsignedBigInteger('doctor_id')->index();
+            $table->unsignedBigInteger('doctor_id')->nullable()->index();
             $table->softDeletes();
 
             $table->foreign('room_id')->references('id')->on('rooms')->onDelete('set null');

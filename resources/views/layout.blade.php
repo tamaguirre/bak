@@ -38,6 +38,11 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/calendar" >
+                            Reservas
+                        </a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     @auth

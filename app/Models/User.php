@@ -38,4 +38,15 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
+    // scopes
+
+    public function scopeByRole($query)
+    {
+        if (request()->filled('role_id')) {
+            $query->where('role_id', request('role_id'));
+        }
+
+        return $query;
+    }
 }
