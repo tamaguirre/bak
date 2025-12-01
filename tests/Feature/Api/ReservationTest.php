@@ -87,8 +87,58 @@ class ReservationTest extends TestCase
                     'room_id'       => ['El campo sala es obligatorio.'],
                     'start_date'    => ['El campo fecha de inicio es obligatorio.'],
                     'end_date'      => ['El campo fecha de término es obligatorio.'],
-                    'doctor_id'     => ['El campo doctor es obligatorio.'],
                 ]
             ]);
+    }
+
+    function test_update_a_reservation()
+    {
+        $reservation = Reservation::factory()->create();
+        $data = Reservation::factory()->make();
+
+        $params = [
+            'start_date'    => $data->start_date->format('Y-m-d H:i:s'),
+            'end_date'      => $data->end_date->format('Y-m-d H:i:s'),
+        ];
+
+        $this->put('api/v1/reservations/'.$reservation->id, $params)
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'id'    => $reservation->id
+                ]
+            ]);
+
+        $this->assertDatabaseHas('reservations', [
+            'id'            => $reservation->id,
+            'start_date'    => $data->start_date,
+            'end_date'      => $data->end_date,
+        ]);
+    }
+
+    function test_validate_reservation_at_update()
+    {
+        $reservation = Reservation::factory()->create();
+
+        $this->putJson('api/v1/reservations/'.$reservation->id)
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    'start_date'    => ['El campo fecha de inicio es obligatorio.'],
+                    'end_date'      => ['El campo fecha de término es obligatorio.'],
+                ]
+            ]);
+    }
+
+    function test_delete_a_reservation()
+    {
+        $reservation = Reservation::factory()->create();
+
+        $this->delete('api/v1/reservations/'.$reservation->id)
+            ->assertStatus(204);
+
+        $this->assertSoftDeleted('reservations', [
+            'id'    => $reservation->id,
+        ]);
     }
 }

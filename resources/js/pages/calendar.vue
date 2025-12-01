@@ -78,7 +78,13 @@
         </div>
     </modal>
 
-    <modal id="dlgDelete" title="¿Estás seguro de eliminar esta Reserva?" ok-text="Si">
+    <modal
+        id="dlgDelete"
+       title="¿Estás seguro de eliminar esta Reserva?"
+        ok-text="Si"
+        cancelText="No"
+        :is-question="true"
+        @ok="destroy">
     </modal>
 </template>
 
@@ -106,9 +112,11 @@ const create = ref({
     doctor_id: null,
     emergency: false
 })
+const edit = ref(null)
 
 
 function handleEventClick(clickInfo) {
+    edit.value = clickInfo.event.extendedProps.reservation_id
     const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('dlgDelete'))
     modal.show()
 }
@@ -130,29 +138,19 @@ const handleDrop = (info) => {
 }
 
 const handleEventUpdate = async (info) => {
-    console.log(info, 'info')
     const event = info.event
-    if (event.extendedProps?.temporary) {
-        return
-    }
-    const reservationId = event.extendedProps?.reservation_id ?? event.id
-    if (!reservationId) {
-        console.warn('Reserva sin id, no se puede actualizar')
-        return
-    }
-
+    edit.value = event.extendedProps.reservation_id
     const start = event.start ? dayjs(event.start).format('YYYY-MM-DDTHH:mm') : null
     const end = event.end ? dayjs(event.end).format('YYYY-MM-DDTHH:mm') : dayjs(event.start).add(1, 'hour').format('YYYY-MM-DDTHH:mm')
 
     try {
-        await api.put(`/reservations/${reservationId}`, {
+        await api.put('reservations/' + edit.value, {
             start_date: start,
             end_date: end
         })
-        await loadReservations()
+        loadReservations()
     } catch (error) {
         console.error('Error actualizando reserva:', error)
-        if (typeof info.revert === 'function') info.revert()
     }
 }
 
@@ -201,17 +199,31 @@ const calendarOptions = ref({
 })
 
 const store = async () => {
-    await api.post('/reservations', create.value)
-        .then(() => {
-            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('dlgCreate'))
-            modal.hide()
-            loadReservations()
-        })
-        .catch((error) => {
-            if (error.response && error.response.data && error.response.data.errors) {
-                errors.value = error.response.data.errors
-            }
-        })
+    try {
+        await api.post('/reservations', create.value)
+        loadReservations()
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('dlgCreate'))
+        modal.hide()
+    }
+    catch (err) {
+        if (err.response?.status === 422) {
+            errors.value = err.response.data.errors
+        } else {
+            console.error(err)
+        }
+    }
+}
+
+const destroy = async () => {
+    try {
+        await api.delete('/reservations/' + edit.value)
+        loadReservations()
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('dlgDelete'))
+        modal.hide()
+    }
+    catch (err) {
+        console.error(err)
+    }
 }
 
 
@@ -240,7 +252,10 @@ const loadReservations = async () => {
             allDay: false,
             backgroundColor: reservation.room.type?.color,
             borderColor: reservation.room.type?.color,
-            textColor: '#fff'
+            textColor: '#fff',
+            extendedProps: {
+                reservation_id: reservation.id
+            }
         });
     })
 }

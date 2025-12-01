@@ -33,7 +33,8 @@ const store = async ({ close }) => {
         await api.post('/users', create.value)
         loadUsers()
         close()
-    } catch (err) {
+    }
+    catch (err) {
         if (err.response?.status === 422) {
             errors.value = err.response.data.errors
         } else {
@@ -47,7 +48,8 @@ const update = async ({ close }) => {
         await api.put('/users/' + edit.value.id, edit.value)
         loadUsers()
         close()
-    } catch (err) {
+    }
+    catch (err) {
         if (err.response?.status === 422) {
             errors.value = err.response.data.errors
         } else {
@@ -61,7 +63,8 @@ const destroy = async ({ close }) => {
         await api.delete('/users/' + edit.value.id)
         loadUsers()
         close()
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err)
     }
 }

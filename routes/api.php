@@ -12,7 +12,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('rooms', RoomController::class);
     Route::get('room-types', [RoomTypeController::class, 'index']);
     Route::get('roles', [RoleController::class, 'index']);
-    Route::get('reservations', [ReservationController::class, 'index']);
-    Route::post('reservations', [ReservationController::class, 'store']);
+    Route::apiResource('reservations', ReservationController::class);
 });
 
