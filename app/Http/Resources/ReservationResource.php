@@ -14,6 +14,8 @@ class ReservationResource extends JsonResource
             'start_date'    => $this->start_date,
             'end_date'      => $this->end_date,
             'emergency'     => (bool) $this->emergency,
+            'restroom'      => (bool) $this->restroom,
+            'patient_name'  => $this->patient_name ?? '-',
             'room'          => new RoomResource($this->whenLoaded('room')),
             'doctor'        => new UserResource($this->whenLoaded('doctor')),
         ];

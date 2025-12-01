@@ -46,16 +46,18 @@
 
     <modal id="dlgCreate" title="Reservar Sala" ok-text="Guardar" @ok="store">
         <div class="row">
-            <div class="col-12 mb-3">
+            <div class="col-6 mb-3">
                 <label class="form-label">Fecha de Inicio</label>
                 <input type="datetime-local" class="form-control" v-model="create.start_date">
                 <p class="text-danger" v-if="errors?.start_date">{{ errors.start_date[0] }}</p>
             </div>
-            <div class="col-12 mb-3">
+            <div class="col-6 mb-3">
                 <label class="form-label">Fecha de Término</label>
                 <input type="datetime-local" class="form-control" v-model="create.end_date">
                 <p class="text-danger" v-if="errors?.end_date">{{ errors.end_date[0] }}</p>
             </div>
+        </div>
+        <div class="row">
             <div class="col-12 mb-3">
                 <label class="form-check-label">
                     <input type="checkbox" v-model="create.emergency">
@@ -75,6 +77,22 @@
                 </select>
                 <p class="text-danger" v-if="errors?.doctor_id">{{ errors.doctor_id[0] }}</p>
             </div>
+            <div class="col-12 mb-3">
+                <label class="form-label">Nombre del Paciente</label>
+                <input type="text" class="form-control" v-model="create.patient_name">
+                <p class="text-danger" v-if="errors?.patient_name">{{ errors.patient_name[0] }}</p>
+            </div>
+            <div class="col-12 mb-3">
+                <label class="form-check-label">
+                    <input type="checkbox" v-model="create.restroom">
+                    Solicita Aseo (adicional 30 minutos)
+                </label>
+            </div>
+            <div class="col-12 mb-3">
+                <label class="form-label">Notas</label>
+                <textarea type="text" class="form-control" v-model="create.notes"></textarea>
+                <p class="text-danger" v-if="errors?.notes">{{ errors.notes[0] }}</p>
+            </div>
         </div>
     </modal>
 
@@ -88,7 +106,7 @@
     </modal>
 </template>
 
-<script setup>
+<script lang="js" setup>
 import { onMounted, ref } from 'vue';
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -161,7 +179,7 @@ const calendarOptions = ref({
     headerToolbar: {
         left: 'prev,next',
         center: 'title',
-        right: 'timeGridWeek'
+        right: 'timeGridWeek,timeGridDay'
     },
     allDaySlot: false,
     events: [],
@@ -175,25 +193,36 @@ const calendarOptions = ref({
     eventDrop: handleEventUpdate,
     eventResize: handleEventUpdate,
     eventClick: handleEventClick,
+// javascript
     eventDidMount: (info) => {
         info.el.style.fontSize = '11px';
-        info.el.style.lineHeight = '1';
-        const fullTitle = info.event.title || '';
-        info.el.setAttribute('title', fullTitle);
+        info.el.style.lineHeight = '1.2';
+
+        const titleHtml = info.event.extendedProps?.titleHtml;
+        const titleTarget = info.el.querySelector('.fc-event-title') || info.el.querySelector('.fc-event-main') || info.el;
+
+        if (titleHtml) {
+            titleTarget.innerHTML = titleHtml;
+            titleTarget.style.whiteSpace = 'normal';
+        }
+
+        const tooltipHtml = info.event.extendedProps?.tooltipHtml;
+
         try {
+            const existing = bootstrap.Tooltip.getInstance(info.el);
+            if (existing) existing.dispose();
+
             info.el.setAttribute('data-bs-toggle', 'tooltip');
             info.el.setAttribute('data-bs-placement', 'top');
-            const tip = bootstrap.Tooltip.getOrCreateInstance(info.el);
+            info.el.setAttribute('data-bs-html', 'true');
+
+            const tip = new bootstrap.Tooltip(info.el, {
+                html: true,
+                title: tooltipHtml || info.event.title
+            });
             info.el.__bs_tooltip = tip;
         } catch (e) {
             console.error('Error initializing tooltip:', e);
-        }
-    },
-    eventWillUnmount: (info) => {
-        const tip = info.el.__bs_tooltip;
-        if (tip) {
-            tip.dispose();
-            delete info.el.__bs_tooltip;
         }
     }
 })
@@ -242,11 +271,13 @@ const loadReservations = async () => {
 
     calendarOptions.value.events = data.data.map(reservation => {
         const doctor = reservation.emergency ? 'Emergencia' : reservation.doctor?.name
-        const title = reservation.room.type?.name + ' - ' + reservation.room.name +
-        ', ' + doctor
+        const restroom = reservation.restroom ? '<br><strong>Aseo solicitado</strong>' : ''
+        const titleText = `${reservation.room.type?.name} - ${reservation.room.name}\nDoctor: ${doctor}\nPaciente: ${reservation.patient_name}${restroom}`
+        const titleHtml = titleText.replace(/\n/g, '<br>')
+        const tooltipHtml = `<strong>${reservation.room.type?.name} - ${reservation.room.name}</strong><br>Doctor: ${doctor}<br>Paciente: ${reservation.patient_name}${reservation.restroom ? '<br><strong>Aseo solicitado</strong>' : ''}`
 
         return ({
-            title: title,
+            title: titleText,
             start: reservation.start_date,
             end: reservation.end_date,
             allDay: false,
@@ -254,7 +285,9 @@ const loadReservations = async () => {
             borderColor: reservation.room.type?.color,
             textColor: '#fff',
             extendedProps: {
-                reservation_id: reservation.id
+                reservation_id: reservation.id,
+                titleHtml,
+                tooltipHtml
             }
         });
     })

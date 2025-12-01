@@ -59,6 +59,9 @@ class ReservationTest extends TestCase
             'end_date'      => $data->end_date->format('Y-m-d H:i:s'),
             'emergency'     => $data->emergency,
             'doctor_id'     => $data->doctor_id,
+            'patient_name'  => $data->patient_name,
+            'notes'         => $data->notes,
+            'restroom'      => $data->restroom,
         ];
 
         $this->post('api/v1/reservations', $params)
@@ -75,6 +78,9 @@ class ReservationTest extends TestCase
             'end_date'      => $data->end_date,
             'emergency'     => $data->emergency,
             'doctor_id'     => $data->doctor_id,
+            'patient_name'  => $data->patient_name,
+            'notes'         => $data->notes,
+            'restroom'      => $data->restroom,
         ]);
     }
 
