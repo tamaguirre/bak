@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('room_types', function (Blueprint $table) {
-            $table->string('color', 10)->nullable()->after('name');
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->unsignedBigInteger('status_id')->nullable();
+
+            $table->foreign('status_id')->references('id')->on('statuses')->onDelete('set null');
         });
     }
 
@@ -21,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('room_types', function (Blueprint $table) {
-            $table->dropColumn('color');
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->dropColumn('status_id');
         });
     }
 };

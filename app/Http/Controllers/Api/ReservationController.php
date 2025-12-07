@@ -7,6 +7,7 @@ use App\Http\Requests\ReservationStore;
 use App\Http\Requests\ReservationUpdate;
 use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
+use App\Models\Status;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,7 +17,7 @@ class ReservationController extends Controller
     public function index(): JsonResource
     {
         $reservations = Reservation::query()
-            ->with(['room.type', 'doctor'])
+            ->with(['room.type', 'doctor', 'status'])
             ->byRoom()
             ->get();
 
@@ -25,6 +26,8 @@ class ReservationController extends Controller
 
     public function store(ReservationStore $request)
     {
+        $request->merge(['status_id' => Status::RESERVED]);
+
         if($request->filled('restroom') && $request->restroom) {
             $request->merge([
                 'end_date' => Carbon::createFromDate($request->end_date)->addMinutes(30)->toDateTimeString()
@@ -32,7 +35,8 @@ class ReservationController extends Controller
         }
 
         $reservation = Reservation::query()->create($request->only([
-            'room_id', 'start_date', 'end_date', 'emergency', 'doctor_id', 'patient_name', 'notes', 'restroom'
+            'room_id', 'start_date', 'end_date', 'emergency', 'doctor_id',
+            'patient_name', 'notes', 'restroom', 'status_id'
         ]));
 
         return new ReservationResource($reservation);

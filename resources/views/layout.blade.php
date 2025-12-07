@@ -24,25 +24,36 @@
                         <a class="nav-link" href="/">Inicio</a>
                     </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle"
-                           href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Administración
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="productsDropdown">
-                            <li>
-                                <a class="dropdown-item" href="/users">Usuarios</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/rooms">Pabellones</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link" href="/calendar" >
-                            Reservas
-                        </a>
-                    </li>
+                    @if(in_array(auth()->user()->role_id, [1, 2]))
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"
+                               href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Administración
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="productsDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="/users">Usuarios</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/rooms">Pabellones</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/shifts">Turnos</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="/calendar" >
+                                Reservas
+                            </a>
+                        </li>
+                    @elseif(auth()->user()->role_id == 4)
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="/my-reservations" >
+                                Mis Reservas
+                            </a>
+                        </li>
+                    @endif
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     @auth

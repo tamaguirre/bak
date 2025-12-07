@@ -4,8 +4,8 @@ namespace Tests\Feature\Api;
 
 use App\Models\Reservation;
 use App\Models\Room;
+use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
@@ -23,7 +23,8 @@ class ReservationTest extends TestCase
                     [
                         'id'        => $reservation->id,
                         'room'      => [],
-                        'doctor'    => []
+                        'doctor'    => [],
+                        'status'    => []
                     ]
                 ]
             ]);
@@ -52,6 +53,7 @@ class ReservationTest extends TestCase
     function test_store_a_reservation()
     {
         $data = Reservation::factory()->make();
+        $status = Status::factory()->create(['id' => Status::RESERVED]);
 
         $params = [
             'room_id'       => $data->room_id,
@@ -74,13 +76,14 @@ class ReservationTest extends TestCase
 
         $this->assertDatabaseHas('reservations', [
             'room_id'       => $data->room_id,
-            'start_date'    => $data->start_date,
-            'end_date'      => $data->end_date,
+            'start_date'    => $data->start_date->format('Y-m-d H:i:s'),
+            'end_date'      => $data->end_date->format('Y-m-d H:i:s'),
             'emergency'     => $data->emergency,
             'doctor_id'     => $data->doctor_id,
             'patient_name'  => $data->patient_name,
             'notes'         => $data->notes,
             'restroom'      => $data->restroom,
+            'status_id'     => $status->id
         ]);
     }
 

@@ -18,6 +18,7 @@ class ReservationResource extends JsonResource
             'patient_name'  => $this->patient_name ?? '-',
             'room'          => new RoomResource($this->whenLoaded('room')),
             'doctor'        => new UserResource($this->whenLoaded('doctor')),
+            'status'        => new StatusResource($this->whenLoaded('status')),
         ];
     }
 }

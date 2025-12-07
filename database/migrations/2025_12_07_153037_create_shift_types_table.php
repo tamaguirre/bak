@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('room_types', function (Blueprint $table) {
-            $table->string('color', 10)->nullable()->after('name');
+        Schema::create('shift_types', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->string('name')->unique();
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->softDeletes();
         });
     }
 
@@ -21,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('room_types', function (Blueprint $table) {
-            $table->dropColumn('color');
-        });
+        Schema::dropIfExists('shift_types');
     }
 };
